@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">219841203502</string>
+    <string name="google_api_key" translatable="false">AIzaSyC2Ga3Y0ft5B0gG7w5pWc8iFCKQoTqZLLc</string>
+    <string name="google_app_id" translatable="false">1:219841203502:android:6faf3ba281d38f46cd3ebf</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyC2Ga3Y0ft5B0gG7w5pWc8iFCKQoTqZLLc</string>
+    <string name="google_storage_bucket" translatable="false">kinderjump-77a97.firebasestorage.app</string>
+    <string name="project_id" translatable="false">kinderjump-77a97</string>
+</resources>

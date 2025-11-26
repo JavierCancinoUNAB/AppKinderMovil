@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "219841203502",
+    "project_id": "kinderjump-77a97",
+    "storage_bucket": "kinderjump-77a97.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219841203502:android:b8e30f994f91ae8dcd3ebf",
+        "android_client_info": {
+          "package_name": "com.aorus.kinderjump"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219841203502-ld8ofa295u1gajnu4hckso47rqt027r4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aorus.kinderjump",
+            "certificate_hash": "364117d01f66b38e57658d938fbf31dc16704857"
+          }
+        },
+        {
+          "client_id": "219841203502-vgd10u1vgndcv2sgtc392m0lb9hep5ue.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aorus.kinderjump",
+            "certificate_hash": "a1892eb73040508f9f3855ab985fe85d1e7a2e8d"
+          }
+        },
+        {
+          "client_id": "219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2Ga3Y0ft5B0gG7w5pWc8iFCKQoTqZLLc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
