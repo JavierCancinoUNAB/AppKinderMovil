@@ -4,7 +4,7 @@ export default {
     "slug": "kinderjump",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "kinderjump",
+    "scheme": "com.aorus.kinderjump",
     "splash": {
       "backgroundColor": "#a29bfe"
     },
@@ -23,17 +23,15 @@ export default {
       },
       "API_BASE_URL": "http://192.168.100.18:3000",
       
-      "FIREBASE_API_KEY": "AIzaSyB1mjajAfA3Bw8_Dnt_UvqNbfw40moJ-yQ",
+      "FIREBASE_API_KEY": "AIzaSyC2Ga3Y0ft5B0gG7w5pWc8iFCKQoTqZLLc",
       "FIREBASE_AUTH_DOMAIN": "kinderjump-77a97.firebaseapp.com",
       "FIREBASE_PROJECT_ID": "kinderjump-77a97",
       "FIREBASE_STORAGE_BUCKET": "kinderjump-77a97.firebasestorage.app",
       "FIREBASE_MESSAGING_SENDER_ID": "219841203502",
-      "FIREBASE_APP_ID": "1:219841203502:web:526754b380bc0f73cd3ebf",
-      "FIREBASE_measurementId": "G-BH28RN3854",
+      "FIREBASE_APP_ID": "1:219841203502:android:b8e30f994f91ae8dcd3ebf",
       
-      "FIREBASE_ANDROID_CLIENT_ID": "219841203502-urdme8i3glgodkmpcc0gsqtbkjirimjc.apps.googleusercontent.com",
-      "FIREBASE_IOS_CLIENT_ID": "219841203502-urdme8i3glgodkmpcc0gsqtbkjirimjc.apps.googleusercontent.com",
-      "FIREBASE_WEB_CLIENT_ID": "219841203502-ia52mqp6av3q5lenakqmtmo4e0o4nkv3.apps.googleusercontent.com"
+      "GOOGLE_WEB_CLIENT_ID": "219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com",
+      "GOOGLE_ANDROID_CLIENT_ID": "219841203502-l8nuk3rbdm6smo5arh0cronfh5ot9pn8.apps.googleusercontent.com"
     }
   }
 };

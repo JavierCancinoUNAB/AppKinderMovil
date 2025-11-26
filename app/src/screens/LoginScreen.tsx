@@ -1,11 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, TextInput, Platform } from 'react-native';
 import { AuthContext } from '../auth/AuthContext';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential, signInWithPopup } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../auth/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -16,9 +17,15 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const WEB_CLIENT_ID = Constants.expoConfig?.extra?.GOOGLE_WEB_CLIENT_ID;
+  const ANDROID_CLIENT_ID = Constants.expoConfig?.extra?.GOOGLE_ANDROID_CLIENT_ID;
+
+  console.log('🔧 Config:', { WEB_CLIENT_ID: WEB_CLIENT_ID?.substring(0, 20), ANDROID_CLIENT_ID: ANDROID_CLIENT_ID?.substring(0, 20) });
+
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: '219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com', // Web Client ID (type 3)
-    androidClientId: '219841203502-l8nuk3rbdm6smo5arh0cronfh5ot9pn8.apps.googleusercontent.com', // Android Client ID - SHA-1: 21e91cbfc6cc9f3e69dad853e6ea47b48388ebf7 (EAS builds)
+    clientId: WEB_CLIENT_ID,
+    androidClientId: ANDROID_CLIENT_ID,
+    redirectUri: 'com.aorus.kinderjump:/oauth2redirect/google',
   });
 
   useEffect(() => {
