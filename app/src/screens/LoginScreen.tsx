@@ -17,14 +17,23 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: '219841203502-mssabqcdcfekl0kj7h58ovltkfqm6q38.apps.googleusercontent.com',
-    androidClientId: '219841203502-j6ajhf7r7f7qhuu8r4fnm5e1qvemfn69.apps.googleusercontent.com',
+    clientId: '219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com', // Web Client ID from google-services.json
+    androidClientId: '219841203502-ld8ofa295u1gajnu4hckso47rqt027r4.apps.googleusercontent.com', // Android Client ID (SHA-1: 364117d01f66b38e57658d938fbf31dc16704857)
   });
 
   useEffect(() => {
     if (response?.type === 'success') {
       const { id_token } = response.params;
+      console.log('✅ Respuesta exitosa de Google OAuth');
       handleGoogleSignInSuccess(id_token);
+    } else if (response?.type === 'error') {
+      console.error('❌ Error en OAuth:', response.error);
+      Alert.alert(
+        'Error de Autenticación',
+        `No se pudo conectar con Google: ${response.error?.message || 'Error desconocido'}`
+      );
+    } else if (response?.type === 'cancel') {
+      console.log('⚠️ Usuario canceló el inicio de sesión');
     }
   }, [response]);
 
@@ -32,14 +41,17 @@ const LoginScreen = () => {
     try {
       setIsGoogleLoading(true);
       console.log('✅ Token de Google obtenido');
+      console.log('🔑 ID Token:', idToken.substring(0, 50) + '...');
       
       // Create Firebase credential
       const credential = GoogleAuthProvider.credential(idToken);
       
       // Sign in with Firebase
+      console.log('🔄 Autenticando con Firebase...');
       const userCredential = await signInWithCredential(FIREBASE_AUTH, credential);
       const firebaseToken = await userCredential.user.getIdToken();
       
+      console.log('✅ Usuario Firebase:', userCredential.user.email);
       console.log('✅ Token Firebase obtenido, obteniendo JWT del backend');
       
       if (authContext) {
@@ -48,9 +60,26 @@ const LoginScreen = () => {
       
       setIsGoogleLoading(false);
     } catch (error: any) {
-      console.error('❌ Error en Google Sign-In:', error);
+      console.error('❌ Error completo en Google Sign-In:', JSON.stringify(error, null, 2));
+      console.error('❌ Error code:', error.code);
+      console.error('❌ Error message:', error.message);
       setIsGoogleLoading(false);
-      Alert.alert('Error', 'No se pudo completar el inicio de sesión con Google');
+      
+      let errorMsg = 'No se pudo completar el inicio de sesión con Google';
+      
+      if (error.code === 'auth/popup-blocked') {
+        errorMsg = 'La ventana emergente fue bloqueada. Por favor, permite ventanas emergentes para esta aplicación.';
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        errorMsg = 'Inicio de sesión cancelado.';
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMsg = 'Error de conexión. Verifica tu conexión a Internet.';
+      } else if (error.code === 'auth/invalid-credential') {
+        errorMsg = 'Credenciales de Google inválidas. Por favor, intenta nuevamente.';
+      } else if (error.message) {
+        errorMsg = `Error: ${error.message}`;
+      }
+      
+      Alert.alert('Error de Autenticación', errorMsg);
     }
   };
 
