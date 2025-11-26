@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "219841203502-l8nuk3rbdm6smo5arh0cronfh5ot9pn8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aorus.kinderjump",
+            "certificate_hash": "21e91cbfc6cc9f3e69dad853e6ea47b48388ebf7"
+          }
+        },
+        {
           "client_id": "219841203502-ld8ofa295u1gajnu4hckso47rqt027r4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

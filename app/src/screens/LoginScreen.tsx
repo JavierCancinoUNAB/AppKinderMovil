@@ -17,8 +17,8 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: '219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com', // Web Client ID from google-services.json
-    androidClientId: '219841203502-ld8ofa295u1gajnu4hckso47rqt027r4.apps.googleusercontent.com', // Android Client ID (SHA-1: 364117d01f66b38e57658d938fbf31dc16704857)
+    clientId: '219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com', // Web Client ID (type 3)
+    androidClientId: '219841203502-l8nuk3rbdm6smo5arh0cronfh5ot9pn8.apps.googleusercontent.com', // Android Client ID - SHA-1: 21e91cbfc6cc9f3e69dad853e6ea47b48388ebf7 (EAS builds)
   });
 
   useEffect(() => {
