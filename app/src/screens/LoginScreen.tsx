@@ -25,7 +25,6 @@ const LoginScreen = () => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: WEB_CLIENT_ID,
     androidClientId: ANDROID_CLIENT_ID,
-    redirectUri: 'com.aorus.kinderjump:/oauth2redirect/google',
   });
 
   useEffect(() => {
