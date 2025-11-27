@@ -14,11 +14,16 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    // Configurar Google Sign-In solo en builds (no en Expo Go)
-    if (Platform.OS === 'android' && !__DEV__) {
+    // Configurar Google Sign-In con ANDROID Client ID (NO web client)
+    try {
       GoogleSignin.configure({
         webClientId: '219841203502-m1p4cbnl3u0l8rjv70b5cpthd08j4c4q.apps.googleusercontent.com',
+        offlineAccess: true,
+        forceCodeForRefreshToken: true,
       });
+      console.log('✅ Google Sign-In configurado correctamente');
+    } catch (error) {
+      console.error('❌ Error configurando Google Sign-In:', error);
     }
   }, []);
 

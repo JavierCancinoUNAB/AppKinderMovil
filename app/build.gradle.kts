@@ -8,13 +8,13 @@ plugins {
 }
 
 android {
-    namespace = "cl.municipal.kiderjump10"
+    namespace = "com.aorus.kinderjump"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "cl.municipal.kiderjump10"
+        applicationId = "com.aorus.kinderjump"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
