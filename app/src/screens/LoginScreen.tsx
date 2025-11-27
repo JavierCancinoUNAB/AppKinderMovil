@@ -1,14 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, TextInput, Platform } from 'react-native';
 import { AuthContext } from '../auth/AuthContext';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential, signInWithPopup } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../auth/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
-import Constants from 'expo-constants';
-
-WebBrowser.maybeCompleteAuthSession();
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const LoginScreen = () => {
   const authContext = useContext(AuthContext);
@@ -17,125 +13,85 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const WEB_CLIENT_ID = Constants.expoConfig?.extra?.GOOGLE_WEB_CLIENT_ID;
-  const ANDROID_CLIENT_ID = Constants.expoConfig?.extra?.GOOGLE_ANDROID_CLIENT_ID;
-
-  console.log('🔧 Config:', { WEB_CLIENT_ID: WEB_CLIENT_ID?.substring(0, 20), ANDROID_CLIENT_ID: ANDROID_CLIENT_ID?.substring(0, 20) });
-
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: WEB_CLIENT_ID,
-    androidClientId: ANDROID_CLIENT_ID,
-  });
-
   useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      console.log('✅ Respuesta exitosa de Google OAuth');
-      handleGoogleSignInSuccess(id_token);
-    } else if (response?.type === 'error') {
-      console.error('❌ Error en OAuth:', response.error);
-      Alert.alert(
-        'Error de Autenticación',
-        `No se pudo conectar con Google: ${response.error?.message || 'Error desconocido'}`
-      );
-    } else if (response?.type === 'cancel') {
-      console.log('⚠️ Usuario canceló el inicio de sesión');
-    }
-  }, [response]);
+    // Configurar Google Sign-In
+    GoogleSignin.configure({
+      webClientId: '219841203502-m1p4cbnl3u0l8rjv70b5cpthd08j4c4q.apps.googleusercontent.com',
+    });
+  }, []);
 
-  const handleGoogleSignInSuccess = async (idToken: string) => {
+  const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
-      console.log('✅ Token de Google obtenido');
-      console.log('🔑 ID Token:', idToken.substring(0, 50) + '...');
       
-      // Create Firebase credential
-      const credential = GoogleAuthProvider.credential(idToken);
+      // Check if your device supports Google Play
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       
-      // Sign in with Firebase
-      console.log('🔄 Autenticando con Firebase...');
-      const userCredential = await signInWithCredential(FIREBASE_AUTH, credential);
+      // Get the users ID token
+      const { idToken } = await GoogleSignin.signIn();
+      
+      // Create a Google credential with the token
+      const googleCredential = GoogleAuthProvider.credential(idToken);
+      
+      // Sign-in the user with the credential
+      const userCredential = await signInWithCredential(FIREBASE_AUTH, googleCredential);
+      
+      // Get Firebase token
       const firebaseToken = await userCredential.user.getIdToken();
       
-      console.log('✅ Usuario Firebase:', userCredential.user.email);
-      console.log('✅ Token Firebase obtenido, obteniendo JWT del backend');
-      
-      if (authContext) {
+      // Login with backend
+      if (authContext?.login) {
         await authContext.login(firebaseToken);
       }
-      
-      setIsGoogleLoading(false);
     } catch (error: any) {
-      console.error('❌ Error completo en Google Sign-In:', JSON.stringify(error, null, 2));
-      console.error('❌ Error code:', error.code);
-      console.error('❌ Error message:', error.message);
-      setIsGoogleLoading(false);
+      console.error('Google Sign-In Error:', error);
       
-      let errorMsg = 'No se pudo completar el inicio de sesión con Google';
-      
-      if (error.code === 'auth/popup-blocked') {
-        errorMsg = 'La ventana emergente fue bloqueada. Por favor, permite ventanas emergentes para esta aplicación.';
-      } else if (error.code === 'auth/cancelled-popup-request') {
-        errorMsg = 'Inicio de sesión cancelado.';
-      } else if (error.code === 'auth/network-request-failed') {
-        errorMsg = 'Error de conexión. Verifica tu conexión a Internet.';
-      } else if (error.code === 'auth/invalid-credential') {
-        errorMsg = 'Credenciales de Google inválidas. Por favor, intenta nuevamente.';
-      } else if (error.message) {
-        errorMsg = `Error: ${error.message}`;
+      if (error.code === 'SIGN_IN_CANCELLED') {
+        // User cancelled the login flow
+      } else if (error.code === 'IN_PROGRESS') {
+        // Operation (e.g. sign in) is in progress already
+      } else if (error.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+        Alert.alert('Error', 'Google Play Services no disponible');
+      } else {
+        Alert.alert('Error', error.message || 'Error al iniciar sesión con Google');
       }
-      
-      Alert.alert('Error de Autenticación', errorMsg);
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
-  const handleGoogleSignIn = () => {
-    promptAsync();
-  };
-
-  const handleLogin = async () => {
-    console.log('🔵 INICIANDO LOGIN');
-    
+  const handleEmailLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Por favor ingresa email y contraseña');
       return;
     }
 
-    if (isLoading) return;
-
     try {
       setIsLoading(true);
-      console.log('🔵 Autenticando con:', email);
       const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
-      const idToken = await userCredential.user.getIdToken();
-      console.log('✅ Token Firebase obtenido, obteniendo JWT del backend');
+      const firebaseToken = await userCredential.user.getIdToken();
       
-      if (authContext) {
-        await authContext.login(idToken);
+      if (authContext?.login) {
+        await authContext.login(firebaseToken);
       }
-      setIsLoading(false);
     } catch (error: any) {
-      console.error('❌ Error completo:', error.code, error.message);
+      Alert.alert('Error de Autenticación', error.message);
+    } finally {
       setIsLoading(false);
-      
-      let errorMsg = 'Error de autenticación';
-      if (error.code === 'auth/user-not-found') {
-        errorMsg = 'Usuario no encontrado. Verifica el email.';
-      } else if (error.code === 'auth/wrong-password') {
-        errorMsg = 'Contraseña incorrecta.';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMsg = 'Email inválido.';
-      } else if (error.code === 'auth/invalid-credential') {
-        errorMsg = 'Credenciales inválidas. Verifica email y contraseña.';
-      }
-      
-      Alert.alert('Error', errorMsg);
     }
   };
 
+  if (!authContext) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <LinearGradient
-      colors={['#9333ea', '#ec4899']}
+      colors={['#667eea', '#764ba2']}
       style={styles.container}
     >
       <View style={styles.logoContainer}>
@@ -143,60 +99,62 @@ const LoginScreen = () => {
         <Text style={styles.title}>KinderJump</Text>
         <Text style={styles.subtitle}>Gestión de Asistencia</Text>
       </View>
-      
-      {isLoading || isGoogleLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#fff" />
-          <Text style={styles.loadingText}>
-            {isGoogleLoading ? 'Iniciando con Google...' : 'Autenticando...'}
-          </Text>
-        </View>
-      ) : (
-        <View style={styles.formContainer}>
-          {/* Botón de Google Sign-In */}
-          <TouchableOpacity 
-            style={styles.googleButton}
-            onPress={handleGoogleSignIn}
-            disabled={isGoogleLoading}
-          >
-            <Text style={styles.googleIcon}>🔐</Text>
-            <Text style={styles.googleButtonText}>Continuar con Google</Text>
-          </TouchableOpacity>
 
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>o</Text>
-            <View style={styles.dividerLine} />
-          </View>
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          placeholderTextColor="#999"
+        />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#ccc"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            placeholderTextColor="#ccc"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-          
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholderTextColor="#999"
+        />
+
+        <TouchableOpacity 
+          style={styles.emailButton}
+          onPress={handleEmailLogin}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
             <Text style={styles.buttonText}>Iniciar Sesión</Text>
-          </TouchableOpacity>
-          
-          <Text style={styles.demoText}>
-            Demo: admin@kinderjump.com / password123
-          </Text>
+          )}
+        </TouchableOpacity>
+
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>O</Text>
+          <View style={styles.dividerLine} />
         </View>
-      )}
+
+        <TouchableOpacity 
+          style={styles.googleButton}
+          onPress={handleGoogleSignIn}
+          disabled={isGoogleLoading}
+        >
+          {isGoogleLoading ? (
+            <ActivityIndicator color="#667eea" />
+          ) : (
+            <Text style={styles.googleButtonText}>🔐 Continuar con Google</Text>
+          )}
+        </TouchableOpacity>
+
+        <Text style={styles.testCredentials}>
+          Usuario de prueba:{'\n'}
+          admin@kinderjump.com / password123
+        </Text>
+      </View>
     </LinearGradient>
   );
 };
@@ -231,43 +189,30 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 400,
   },
-  loadingContainer: {
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 15,
-    fontSize: 16,
-    color: '#fff',
-    opacity: 0.9,
-  },
-  googleButton: {
-    flexDirection: 'row',
+  input: {
     backgroundColor: '#fff',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  googleIcon: {
-    fontSize: 20,
-    marginRight: 10,
-  },
-  googleButtonText: {
+    marginBottom: 15,
     fontSize: 16,
-    color: '#333',
-    fontWeight: '600',
+  },
+  emailButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 15,
+    borderRadius: 30,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginVertical: 20,
   },
   dividerLine: {
     flex: 1,
@@ -281,33 +226,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     opacity: 0.7,
   },
-  input: {
+  googleButton: {
+    flexDirection: 'row',
     backgroundColor: '#fff',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 30,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#fff',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 15,
+    justifyContent: 'center',
+    marginBottom: 20,
   },
-  buttonText: {
-    fontSize: 18,
-    color: '#9333ea',
+  googleButtonText: {
+    color: '#667eea',
+    fontSize: 16,
     fontWeight: 'bold',
   },
-  demoText: {
+  testCredentials: {
     color: '#fff',
     textAlign: 'center',
+    fontSize: 12,
+    opacity: 0.7,
     marginTop: 10,
-    fontSize: 14,
-    opacity: 0.8,
   },
 });
 

@@ -9,6 +9,18 @@ export default {
       "backgroundColor": "#a29bfe"
     },
 
+    "plugins": [
+      "@react-native-google-signin/google-signin",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+
     "android": {
       "package": "com.aorus.kinderjump",
       "googleServicesFile": "./google-services.json"

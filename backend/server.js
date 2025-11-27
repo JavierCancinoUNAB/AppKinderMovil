@@ -254,14 +254,154 @@ app.get('/api/attendance/today', authenticateToken, (req, res) => {
   res.json(todayRecords);
 });
 
+// ===== PÁGINA DE INICIO =====
+app.get('/', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>KinderJump Backend API</title>
+      <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          max-width: 800px;
+          margin: 50px auto;
+          padding: 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+        }
+        .container {
+          background: rgba(255, 255, 255, 0.1);
+          padding: 30px;
+          border-radius: 15px;
+          backdrop-filter: blur(10px);
+        }
+        h1 { margin-top: 0; }
+        .status { 
+          background: #4caf50; 
+          padding: 10px 20px; 
+          border-radius: 5px; 
+          display: inline-block;
+          margin: 10px 0;
+        }
+        .endpoint {
+          background: rgba(0, 0, 0, 0.2);
+          padding: 15px;
+          margin: 10px 0;
+          border-radius: 8px;
+          border-left: 4px solid #ffd700;
+        }
+        code {
+          background: rgba(0, 0, 0, 0.3);
+          padding: 2px 6px;
+          border-radius: 3px;
+          font-family: 'Courier New', monospace;
+        }
+        .method {
+          display: inline-block;
+          padding: 3px 8px;
+          border-radius: 3px;
+          font-weight: bold;
+          margin-right: 10px;
+        }
+        .get { background: #61affe; }
+        .post { background: #49cc90; }
+        .put { background: #fca130; }
+        .delete { background: #f93e3e; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>🎓 KinderJump Backend API</h1>
+        <div class="status">✅ Servidor funcionando correctamente</div>
+        
+        <h2>📋 Endpoints Disponibles:</h2>
+        
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/health</code><br>
+          <small>Verificar estado del servidor</small>
+        </div>
+        
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <code>/api/auth/firebase</code><br>
+          <small>Autenticación con Firebase (obtener JWT)</small>
+        </div>
+        
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/api/students</code><br>
+          <small>Obtener lista de estudiantes (requiere autenticación)</small>
+        </div>
+        
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <code>/api/students</code><br>
+          <small>Crear nuevo estudiante (requiere autenticación)</small>
+        </div>
+        
+        <div class="endpoint">
+          <span class="method put">PUT</span>
+          <code>/api/students/:id</code><br>
+          <small>Actualizar estudiante (requiere autenticación)</small>
+        </div>
+        
+        <div class="endpoint">
+          <span class="method delete">DELETE</span>
+          <code>/api/students/:id</code><br>
+          <small>Eliminar estudiante (requiere autenticación)</small>
+        </div>
+        
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <code>/api/attendance</code><br>
+          <small>Registrar asistencia (requiere autenticación)</small>
+        </div>
+        
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/api/attendance/history</code><br>
+          <small>Obtener historial de asistencia (requiere autenticación)</small>
+        </div>
+        
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/api/attendance/today</code><br>
+          <small>Obtener asistencia del día actual (requiere autenticación)</small>
+        </div>
+        
+        <h2>📊 Estadísticas:</h2>
+        <p>📚 Estudiantes registrados: ${students.length}</p>
+        <p>📝 Registros de asistencia: ${attendanceRecords.length}</p>
+        
+        <h2>🔗 Links Útiles:</h2>
+        <p>
+          <a href="/health" style="color: #ffd700;">🔍 Verificar Health Check</a>
+        </p>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
 // ===== HEALTH CHECK =====
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'KinderJump Backend funcionando correctamente' });
 });
 
 // Iniciar servidor
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Servidor KinderJump corriendo en http://192.168.100.18:${PORT}`);
   console.log(`📚 Estudiantes iniciales: ${students.length}`);
   console.log(`📝 Registros de asistencia: ${attendanceRecords.length}`);
+});
+
+server.on('error', (error) => {
+  console.error('❌ Error al iniciar servidor:', error);
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Puerto ${PORT} ya está en uso`);
+  }
 });
