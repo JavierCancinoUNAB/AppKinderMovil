@@ -14,32 +14,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "219841203502-l8nuk3rbdm6smo5arh0cronfh5ot9pn8.apps.googleusercontent.com",
+          "client_id": "219841203502-1t81on9oa339cq8flg8oqirespc9c8jl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.aorus.kinderjump",
             "certificate_hash": "21e91cbfc6cc9f3e69dad853e6ea47b48388ebf7"
           }
-        },
-        {
-          "client_id": "219841203502-ld8ofa295u1gajnu4hckso47rqt027r4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.aorus.kinderjump",
-            "certificate_hash": "364117d01f66b38e57658d938fbf31dc16704857"
-          }
-        },
-        {
-          "client_id": "219841203502-vgd10u1vgndcv2sgtc392m0lb9hep5ue.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.aorus.kinderjump",
-            "certificate_hash": "a1892eb73040508f9f3855ab985fe85d1e7a2e8d"
-          }
-        },
-        {
-          "client_id": "219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -51,7 +31,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com",
+              "client_id": "219841203502-m1p4cbnl3u0l8rjv70b5cpthd08j4c4q.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
