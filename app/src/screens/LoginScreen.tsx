@@ -14,10 +14,12 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    // Configurar Google Sign-In
-    GoogleSignin.configure({
-      webClientId: '219841203502-m1p4cbnl3u0l8rjv70b5cpthd08j4c4q.apps.googleusercontent.com',
-    });
+    // Configurar Google Sign-In solo en builds (no en Expo Go)
+    if (Platform.OS === 'android' && !__DEV__) {
+      GoogleSignin.configure({
+        webClientId: '219841203502-m1p4cbnl3u0l8rjv70b5cpthd08j4c4q.apps.googleusercontent.com',
+      });
+    }
   }, []);
 
   const handleGoogleSignIn = async () => {
@@ -28,7 +30,12 @@ const LoginScreen = () => {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       
       // Get the users ID token
-      const { idToken } = await GoogleSignin.signIn();
+      const signInResult = await GoogleSignin.signIn();
+      const idToken = signInResult.data?.idToken;
+      
+      if (!idToken) {
+        throw new Error('No se pudo obtener el token de Google');
+      }
       
       // Create a Google credential with the token
       const googleCredential = GoogleAuthProvider.credential(idToken);
