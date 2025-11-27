@@ -1,7 +1,7 @@
 # KinderJump Mobile App
 
 Esta es una aplicación móvil de React Native con Expo para KinderJump, un sistema de gestión de asistencia para jardines de infancia.
-
+Para descargar esta App, tiene que en su movil Android Entrar en el enlace https://expo.dev/accounts/javiercancinounab/projects/kinderjump/builds/4cae473b-2dcb-4c38-823e-9b8b5fcd01bc
 ## Stack Técnico
 
 - **Framework**: React Native con Expo (Managed Workflow)
