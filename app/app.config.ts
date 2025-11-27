@@ -30,7 +30,7 @@ export default {
       "FIREBASE_MESSAGING_SENDER_ID": "219841203502",
       "FIREBASE_APP_ID": "1:219841203502:android:b8e30f994f91ae8dcd3ebf",
       
-      "GOOGLE_WEB_CLIENT_ID": "219841203502-78ou81sltjs53qqebib042jptfdsmg55.apps.googleusercontent.com",
+      "GOOGLE_WEB_CLIENT_ID": "219841203502-m1p4cbnl3u0l8rjv70b5cpthd08j4c4q.apps.googleusercontent.com",
       "GOOGLE_ANDROID_CLIENT_ID": "219841203502-l8nuk3rbdm6smo5arh0cronfh5ot9pn8.apps.googleusercontent.com"
     }
   }
